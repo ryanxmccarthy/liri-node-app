@@ -4,6 +4,8 @@ var Twitter = require('twitter');
 
 var Spotify = require('node-spotify-api');
 
+var request = require('request');
+
 var keys = require('./keys.js');
 
 var spotify = new Spotify({
@@ -24,27 +26,57 @@ var command = arg[2];
 
 var name = arg[3];
 
+arg = arg.slice(3);
+
+name = arg.join('+');
+
 if (command === 'my-tweets') {
 	var params = {
 		screen_name: 'yungtechgod'
 	};
 	client.get('statuses/user_timeline', params, function(error, tweets, response) {
 	  if (!error) {
-	    console.log(tweets);
+	  	for (var i = 0; i < tweets.length; i++) {
+	  		console.log('Tweet Text:', tweets[i].text);
+	  		console.log('Tweet Created:', tweets[i].created_at)
+	  		console.log('--------------------------------------------------------------------')
+	  	}    
 	  }
 	});
 } else if (command === 'spotify-this-song') {
-	spotify.request('https://api.spotify.com/v1/tracks/7yCPwWs66K8Ba5lFuU2bcx')
-		.then(function(data) {
-	    	console.log(data.album.artists[0].name);
-	    	console.log(data.name);
-	    	console.log(data.preview_url);
-	    	console.log(data.album.name); 
-	  	}).catch(function(err) {
-	    	console.error('Error occurred: ' + err); 
-		});
+	spotify.search({ type: 'track', query: name }, function(err, data) {
+		if (err) {
+	    	return console.log('Error occurred: ' + err);
+		} 
+		console.log('Artist(s):', data.tracks.items[0].album.artists[0].name);
+		console.log('Song:', data.tracks.items[0].name); 
+		console.log('Preview:', data.tracks.items[0].preview_url); 
+		console.log('Album:', data.tracks.items[0].album.name); 
+	});
 } else if (command === 'movie-this') {
-	console.log('here is the movie')
+	if (!name) {
+		request('http://www.omdbapi.com/?apikey=40e9cece&t=mr+nobody', function (error, response, body) {
+			console.log('Title:', JSON.parse(body).Title);
+			console.log('Year:', JSON.parse(body).Year);
+			console.log('IMDB Rating:', JSON.parse(body).imdbRating);
+			console.log('Rotten Tomatoes Rating:', JSON.parse(body).Ratings[1].Value);
+			console.log('Country:', JSON.parse(body).Country);
+			console.log('Language:', JSON.parse(body).Language);
+			console.log('Plot:', JSON.parse(body).Plot);
+			console.log('Actors:', JSON.parse(body).Actors);
+		});
+	} else {
+		request('http://www.omdbapi.com/?apikey=40e9cece&t=' + name, function (error, response, body) {
+			console.log('Title:', JSON.parse(body).Title);
+			console.log('Year:', JSON.parse(body).Year);
+			console.log('IMDB Rating:', JSON.parse(body).imdbRating);
+			console.log('Rotten Tomatoes Rating:', JSON.parse(body).Ratings[1].Value);
+			console.log('Country:', JSON.parse(body).Country);
+			console.log('Language:', JSON.parse(body).Language);
+			console.log('Plot:', JSON.parse(body).Plot);
+			console.log('Actors:', JSON.parse(body).Actors);
+		});
+	}
 } else if (command === 'do-what-it-says') {
 	console.log('im doing what you said')
 }
