@@ -1,5 +1,7 @@
 var inquirer = require("inquirer");
 
+var keys = require('./keys.js');
+
 var Twitter = require('twitter');
 
 var Spotify = require('node-spotify-api');
@@ -8,19 +10,9 @@ var request = require('request');
 
 var fs = require('file-system');
 
-var keys = require('./keys.js');
+var client = new Twitter(keys.twitter)
 
-var spotify = new Spotify({
-  id: 'efee065879d74d72925470820cd414e3',
-  secret: '8ee79d2c2fc1410ab416b16b3a95f8b4',
-});
-
-var client = new Twitter({
-  consumer_key: 'EEDml0ELLQr8375Xw7xlToFsT',
-  consumer_secret: 'W3ktFUN6LPWYClIVIItHYq0d2rAeenVd5CMSXX1AqJE5j9zu4u',
-  access_token_key: '2790092151-zDI2OIepj0jeLSEpzUfqjRo5IAsHFBRT6oeZNNq',
-  access_token_secret: 'KUClCI34y0xbC0KLnmTh3rVCtXefbYnGqZuBgtfhBNPGe',
-}); 
+var spot = new Spotify(keys.spotify)
 
 var arg = process.argv;
 
@@ -47,7 +39,7 @@ if (command === 'my-tweets') {
 	});
 } else if (command === 'spotify-this-song') {
 	if (!name) {
-		spotify
+		spot
 		  .request('https://api.spotify.com/v1/tracks/0hrBpAOgrt8RXigk83LLNE')
 		  .then(function(data) {
 		    console.log('Artist(s):', data.album.artists[0].name);
@@ -59,7 +51,7 @@ if (command === 'my-tweets') {
 		    console.error('Error occurred: ' + err); 
 		  });
 	} else {
-		spotify.search({ type: 'track', query: name }, function(err, data) {
+		spot.search({ type: 'track', query: name }, function(err, data) {
 			console.log('Artist(s):', data.tracks.items[0].album.artists[0].name);
 			console.log('Song:', data.tracks.items[0].name); 
 			console.log('Preview:', data.tracks.items[0].preview_url); 
