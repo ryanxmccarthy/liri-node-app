@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/ryanxmccarthy/liri-node-app#readme",
   "dependencies": {
+    "file-system": "^2.2.2",
+    "fs": "0.0.1-security",
     "inquire": "^0.4.8",
     "inquirer": "^3.3.0",
     "node-spotify-api": "^1.0.7",

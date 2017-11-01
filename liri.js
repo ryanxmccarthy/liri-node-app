@@ -6,6 +6,8 @@ var Spotify = require('node-spotify-api');
 
 var request = require('request');
 
+var fs = require('file-system');
+
 var keys = require('./keys.js');
 
 var spotify = new Spotify({
@@ -44,16 +46,26 @@ if (command === 'my-tweets') {
 	  }
 	});
 } else if (command === 'spotify-this-song') {
-	spotify.search({ type: 'track', query: name }, function(err, data) {
-		if (!name) {
-			console.log('there was no name')
-		} else {
+	if (!name) {
+		spotify
+		  .request('https://api.spotify.com/v1/tracks/0hrBpAOgrt8RXigk83LLNE')
+		  .then(function(data) {
+		    console.log('Artist(s):', data.album.artists[0].name);
+			console.log('Song:', 'The Sign');
+			console.log('Preview:', 'https://p.scdn.co/mp3-preview/4c463359f67dd3546db7294d236dd0ae991882ff?cid=efee065879d74d72925470820cd414e3');
+			console.log('Album:', 'The Sign (US Album) [Remastered]');
+		  })
+		  .catch(function(err) {
+		    console.error('Error occurred: ' + err); 
+		  });
+	} else {
+		spotify.search({ type: 'track', query: name }, function(err, data) {
 			console.log('Artist(s):', data.tracks.items[0].album.artists[0].name);
 			console.log('Song:', data.tracks.items[0].name); 
 			console.log('Preview:', data.tracks.items[0].preview_url); 
 			console.log('Album:', data.tracks.items[0].album.name);
-		}	 
-	});
+		});
+	}	 
 } else if (command === 'movie-this') {
 	if (!name) {
 		request('http://www.omdbapi.com/?apikey=40e9cece&t=mr+nobody', function (error, response, body) {
@@ -79,5 +91,18 @@ if (command === 'my-tweets') {
 		});
 	}
 } else if (command === 'do-what-it-says') {
-	console.log('im doing what you said')
+	fs.readFile('random.txt', 'utf8', (err, data) => {
+	  if (err) throw err;
+	  var split = data.split(',')
+	  command = split[0]
+	  if (command === 'spotify-this-song') {
+	  	name = split[1]
+	  	spotify.search({ type: 'track', query: name }, function(err, data) {
+			console.log('Artist(s):', data.tracks.items[0].album.artists[0].name);
+			console.log('Song:', data.tracks.items[0].name); 
+			console.log('Preview:', data.tracks.items[0].preview_url); 
+			console.log('Album:', data.tracks.items[0].album.name);
+		});
+	  }
+	});
 }
