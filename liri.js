@@ -26,7 +26,7 @@ name = arg.join('+');
 
 if (command === 'my-tweets') {
 	var params = {
-		screen_name: 'yungtechgod'
+		screen_name: 'rmmwebdev'
 	};
 	client.get('statuses/user_timeline', params, function(error, tweets, response) {
 	  if (!error) {
@@ -89,7 +89,7 @@ if (command === 'my-tweets') {
 	  command = split[0]
 	  if (command === 'spotify-this-song') {
 	  	name = split[1]
-	  	spotify.search({ type: 'track', query: name }, function(err, data) {
+	  	spot.search({ type: 'track', query: name }, function(err, data) {
 			console.log('Artist(s):', data.tracks.items[0].album.artists[0].name);
 			console.log('Song:', data.tracks.items[0].name); 
 			console.log('Preview:', data.tracks.items[0].preview_url); 

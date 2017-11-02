@@ -12,7 +12,4 @@ var twitter = {
   access_token_secret: 'KUClCI34y0xbC0KLnmTh3rVCtXefbYnGqZuBgtfhBNPGe',
 }; 
 
-module.exports = {
-					twitter: twitter,
-					spotify: spotify
-};
+module.exports = { twitter: twitter, spotify: spotify };
